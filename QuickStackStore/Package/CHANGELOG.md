@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.5
+- Fixed critical bug when using Adventure Backpacks with 'AllowAreaStackingToNonPhysicalContainers' which deleted other players if you did an area stack/restock close to them (possible since version 1.4.0)
+- 'AllowAreaStackingToNonPhysicalContainers' is no longer required to detect Item Drawers
+- Added Korean translation, provided by hanawa07
+- Added Italian translation, provided by Marcuz08
 ## 1.4.4
 - Fixed trash can not reacting to clicks when using both AzuEPI 1.3 and Jewelcrafting
 - Replaced controller key check with a more modern version for better compatibility
@@ -13,7 +18,7 @@
 - Added option to override the behavior of quick stacking by holding the open button on a chest to use the modded quick stacking logic (enabled by default)
 - Fixed layouting problems with the base game 'Place Stacks' button, if it's not disabled
 ## 1.4.1
-- Fixed compatibility with public release 0.217.14 (thank you to JuniorAndria for the pull request on github)
+- Update for current public release 0.217.14 (thank you to JuniorAndria for the pull request on github)
 ## 1.4.0
 - Update for current public release 0.216.9 (thank you to Mistermycelium for the pull request on github)
 - Added config option to exclude non player built containers (like dungeon chests) from area quick stacking/ restocking (enabled by default)

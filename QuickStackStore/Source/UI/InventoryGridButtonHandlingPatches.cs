@@ -99,8 +99,7 @@ namespace QuickStackStore
                     }
                     else
                     {
-                        HandleClickInternal(__instance, __instance.m_selected, keybindName == "JoyButtonA");
-                        return false;
+                        return HandleClickInternal(__instance, __instance.m_selected, keybindName == "JoyButtonA");
                     }
 
                 default:

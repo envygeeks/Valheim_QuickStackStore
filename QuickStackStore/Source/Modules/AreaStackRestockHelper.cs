@@ -24,12 +24,13 @@ namespace QuickStackStore
         {
             if (container.m_piece)
             {
-                return container.m_piece.GetCreator() != 0L ||
-                    QuickStackRestockConfig.AllowAreaStackingToPhysicalNonPlayerBuiltContainers.Value;
+                return container.m_piece.IsPlacedByPlayer()
+                    || QuickStackRestockConfig.AllowAreaStackingToPhysicalNonPlayerBuiltContainers.Value;
             }
             else
             {
-                return QuickStackRestockConfig.AllowAreaStackingToNonPhysicalContainers.Value;
+                return container.m_name == "piece_chest_drawer"
+                    || QuickStackRestockConfig.AllowAreaStackingToNonPhysicalContainers.Value;
             }
         }
 
@@ -50,12 +51,12 @@ namespace QuickStackStore
         }
 
         // written with extensibility in mind (I wouldn't even mind if other mods patch this)
-#pragma warning disable IDE0060 // Remove unused parameter
-
         private static bool IsExcludedContainer(Container container)
-#pragma warning restore IDE0060 // Remove unused parameter
         {
-            return false;
+            // prevent claiming ownership of other players (e.g. through adventure backpacks)
+            Player player = container.m_nview.GetComponent<Player>();
+
+            return player && player != Player.m_localPlayer;
         }
 
         // written with extensibility in mind (I wouldn't even mind if other mods patch this)
@@ -73,7 +74,10 @@ namespace QuickStackStore
         // based on Container.Interact
         internal static bool ShouldAffectNonOwnerContainer(Container container, long playerID, bool isSinglePlayer)
         {
-            bool basicCheck = !IsExcludedContainer(container) && CheckContainerPrivacy(container, playerID) && CheckWard(container) && CheckPieceConfigs(container);
+            bool basicCheck = !IsExcludedContainer(container)
+                && CheckContainerPrivacy(container, playerID)
+                && CheckWard(container)
+                && CheckPieceConfigs(container);
 
             if (CompatibilitySupport.HasPlugin(CompatibilitySupport.multiUserChest))
             {

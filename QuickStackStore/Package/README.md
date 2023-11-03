@@ -122,7 +122,7 @@ This mod is incompatible with [Trash Items](https://valheim.thunderstore.io/pack
 
 ## Localization
 
-This mod includes a translation system for all ingame display texts (not the config menu). Currently English, Chinese, Russian, French, Brazilian Portuguese and Polish are supported.
+This mod includes a translation system for all ingame display texts (not the config menu). Currently English, Chinese, Russian, French, Brazilian Portuguese, Polish, Swedish, Korean and Italian are supported.
 
 For minor edits, you can override any display text in the config. If you want to translate everything to your native language, you can take the `QuickStackStore.English.json` as a template and name your file `QuickStackStore.<language>.json`, where `<language>` needs to be the [folder name of the base game for your language](https://valheim-modding.github.io/Jotunn/data/localization/language-list.html). When you are done or need help, please reach out to me, so I can add it to the mod for everyone.
 
@@ -133,7 +133,9 @@ The Russian translation was provided by [Opik7](https://www.nexusmods.com/users/
 The French translation was provided by [cyouinlan](https://www.nexusmods.com/users/45502817).\
 The Brazilian Portuguese translation was provided by [kaiqueknup](https://www.nexusmods.com/users/37243480) and updated by the YggBrasil team.\
 The Polish translation was provided by [ViRooz](https://www.nexusmods.com/users/174267204).\
-The Swedish translation was provided by [DeathDaisy](https://github.com/DeathDaisy).
+The Swedish translation was provided by [DeathDaisy](https://github.com/DeathDaisy).\
+The Korean translation was provided by [hanawa07](https://www.nexusmods.com/users/134678658).\
+The Italian translation was provided by [Marcuz08](https://github.com/marcowesii).
 
 
 Source code available on github: https://github.com/Goldenrevolver/QuickStackStore
