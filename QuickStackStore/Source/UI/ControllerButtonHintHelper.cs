@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static QuickStackStore.QSSConfig;
@@ -7,159 +8,134 @@ namespace QuickStackStore
 {
     internal class ControllerButtonHintHelper
     {
-        internal static Sprite circleButtonSprite;
-        internal static Sprite rectButtonSprite;
-
         internal static void AddControllerTooltipToTrashCan(Button button, Transform parent)
         {
-            //TODO temporarily disabled, due new base game UIGamePad bugs (visual glitches and lag)
+            if (button.gameObject.GetComponent<UIGamePad>())
+            {
+                return;
+            }
 
-            //var uiGamePad = InventoryGui.instance.m_takeAllButton.GetComponent<UIGamePad>();
+            var takeAllControllerHint = InventoryGui.instance.m_takeAllButton.GetComponent<UIGamePad>();
 
-            //var controllerHint = Object.Instantiate(uiGamePad.m_hint, parent);
-            //var uiGamePadNew = button.gameObject.AddComponent<UIGamePad>();
-            //uiGamePadNew.m_hint = controllerHint;
+            var controllerHint = Object.Instantiate(takeAllControllerHint.m_hint, parent);
+            var uiGamePadNew = button.gameObject.AddComponent<UIGamePad>();
+            uiGamePadNew.m_hint = controllerHint;
 
-            //InventoryGui.instance.StartCoroutine(WaitAFrameToSetupControllerHint(uiGamePadNew));
+            InventoryGui.instance.StartCoroutine(WaitAFrameToSetupControllerHint(uiGamePadNew));
         }
 
         private static IEnumerator WaitAFrameToSetupControllerHint(UIGamePad uiGamePad)
         {
             yield return null;
 
-            if (uiGamePad == null)
-            {
-                yield break;
-            }
-
-            if (!uiGamePad.m_hint)
-            {
-                yield break;
-            }
-
             SetupControllerHint(uiGamePad, KeybindChecker.joyTrash);
-        }
-
-        internal static void FixTakeAllButtonControllerHint(InventoryGui instance)
-        {
-            var uiGamePad = instance.m_takeAllButton.GetComponent<UIGamePad>();
-
-            if (!uiGamePad)
-            {
-                return;
-            }
-
-            bool shouldShowHint = !ControllerConfig.RemoveControllerButtonHintFromTakeAllButton.Value;
-
-            uiGamePad.enabled = shouldShowHint;
-
-            var toMoveUp = uiGamePad.m_hint.gameObject;
-
-            if (!shouldShowHint)
-            {
-                toMoveUp.SetActive(false);
-            }
-            else
-            {
-                toMoveUp.SetActive(true);
-
-                //TODO temporarily disabled, because it's not needed while all the other things are disabled
-
-                //var canvas = toMoveUp.GetComponent<Canvas>();
-
-                //if (canvas == null)
-                //{
-                //    canvas = toMoveUp.AddComponent<Canvas>();
-                //}
-
-                //if (!toMoveUp.GetComponent<GraphicRaycaster>())
-                //{
-                //    toMoveUp.AddComponent<GraphicRaycaster>();
-                //}
-
-                //instance.StartCoroutine(DelayedOverrideSorting(canvas));
-            }
-        }
-
-        private static IEnumerator DelayedOverrideSorting(Canvas canvas)
-        {
-            yield return null;
-
-            while (canvas != null && !canvas.isActiveAndEnabled)
-            {
-                yield return null;
-            }
-
-            if (canvas == null)
-            {
-                yield break;
-            }
-
-            canvas.overrideSorting = true;
-            canvas.sortingOrder = 1;
         }
 
         internal static IEnumerator WaitAFrameToSetupControllerHint(Button button, string joyHint)
         {
             yield return null;
 
-            if (button == null)
+            if (button && button.TryGetComponent<UIGamePad>(out var uiGamePad))
             {
-                yield break;
+                SetupControllerHint(uiGamePad, joyHint);
             }
-
-            var uiGamePad = button.GetComponent<UIGamePad>();
-
-            if (!uiGamePad)
-            {
-                yield break;
-            }
-
-            if (uiGamePad.m_hint)
-            {
-                Object.Destroy(uiGamePad.m_hint);
-            }
-
-            Object.Destroy(uiGamePad);
-
-            //TODO temporarily disabled, due new base game UIGamePad bugs (visual glitches and lag)
-
-            //if (!uiGamePad.m_hint)
-            //{
-            //    yield break;
-            //}
-
-            //SetupControllerHint(uiGamePad, joyHint);
         }
 
         internal static void SetupControllerHint(UIGamePad uiGamePad, string joyHint)
         {
-            var hint = uiGamePad.m_hint;
-
-            if (!uiGamePad.m_hint)
+            if (!uiGamePad || !uiGamePad.m_hint)
             {
                 return;
             }
 
             uiGamePad.m_zinputKey = null;
 
-            //TODO temporarily disabled, due new base game UIGamePad bugs (visual glitches and lag)
+            if (ZInput.IsGamepadActive() && ControllerConfig.UseHardcodedControllerSupport.Value)
+            {
+                uiGamePad.m_hint.gameObject.SetActive(true);
 
-            //if (ControllerConfig.UseHardcodedControllerSupport.Value)
-            //{
-            //    hint.gameObject.SetActive(true);
+                var text = uiGamePad.m_hint.GetComponentInChildren<TextMeshProUGUI>(true);
 
-            //    var text = hint.GetComponentInChildren<TextMeshProUGUI>();
-
-            //    if (text)
-            //    {
-            //        text.text = Localization.instance.Translate(KeybindChecker.joyTranslationPrefix + joyHint);
-            //    }
-            //}
-            //else
+                if (text)
+                {
+                    text.text = Localization.instance.Translate(KeybindChecker.joyTranslationPrefix + joyHint);
+                }
+            }
+            else
             {
                 uiGamePad.enabled = false;
-                hint.gameObject.SetActive(false);
+                uiGamePad.m_hint.gameObject.SetActive(false);
+            }
+        }
+
+        internal static void FixTakeAllButtonControllerHint(InventoryGui instance)
+        {
+            var takeAllUIGamePad = instance.m_takeAllButton.GetComponent<UIGamePad>();
+
+            if (!takeAllUIGamePad)
+            {
+                return;
+            }
+
+            var takeAllControllerKeyHint = takeAllUIGamePad.m_hint.gameObject;
+
+            if (ControllerConfig.RemoveControllerButtonHintFromTakeAllButton.Value)
+            {
+                takeAllUIGamePad.enabled = false;
+                takeAllControllerKeyHint.SetActive(false);
+            }
+            else
+            {
+                takeAllUIGamePad.enabled = true;
+                takeAllControllerKeyHint.SetActive(true);
+
+                if (!takeAllControllerKeyHint.GetComponent<TakeAllHintFixer>())
+                {
+                    takeAllControllerKeyHint.AddComponent<TakeAllHintFixer>();
+                }
+            }
+        }
+    }
+
+    internal class TakeAllHintFixer : MonoBehaviour
+    {
+        private Canvas canvas;
+
+        private GraphicRaycaster graphicRaycaster;
+
+        private bool fixedCanvas;
+
+        protected void Start()
+        {
+            if (transform.parent.name != "TakeAll")
+            {
+                Destroy(this);
+            }
+
+            fixedCanvas = false;
+
+            canvas = gameObject.GetComponent<Canvas>();
+            graphicRaycaster = gameObject.GetComponent<GraphicRaycaster>();
+
+            if (!canvas)
+            {
+                canvas = gameObject.AddComponent<Canvas>();
+            }
+
+            if (!graphicRaycaster)
+            {
+                graphicRaycaster = gameObject.AddComponent<GraphicRaycaster>();
+            }
+        }
+
+        protected void Update()
+        {
+            if (!fixedCanvas && canvas && canvas.isActiveAndEnabled)
+            {
+                canvas.overrideSorting = true;
+                canvas.sortingOrder = 1;
+                fixedCanvas = true;
+                Destroy(this);
             }
         }
     }

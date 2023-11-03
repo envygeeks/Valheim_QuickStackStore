@@ -112,7 +112,7 @@ namespace QuickStackStore
                 return RandyStatus.Disabled;
             }
 
-            var status = RandyStatus.EnabledWithQuickSlots;
+            RandyStatus randyStatus = RandyStatus.EnabledWithQuickSlots;
 
             if (RandyQuickSlotsEnabled == null)
             {
@@ -128,10 +128,10 @@ namespace QuickStackStore
 
             if (RandyQuickSlotsEnabled?.GetValue(null) is ConfigEntry<bool> config && !config.Value)
             {
-                status = RandyStatus.EnabledWithoutQuickSlots;
+                randyStatus = RandyStatus.EnabledWithoutQuickSlots;
             }
 
-            return status;
+            return randyStatus;
         }
 
         public static bool HasPluginThatRequiresMiniButtonVMove()

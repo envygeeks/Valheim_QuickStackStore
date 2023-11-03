@@ -111,7 +111,7 @@ namespace QuickStackStore
             else
             {
                 UserConfig playerConfig = UserConfig.GetPlayerConfig(player.GetPlayerID());
-                var includeHotbar = GeneralConfig.OverrideHotkeyBarBehavior.Value != OverrideHotkeyBarBehavior.NeverAffectHotkeyBar && StoreTakeAllConfig.StoreAllIncludesHotkeyBar.Value;
+                bool includeHotbar = GeneralConfig.OverrideHotkeyBarBehavior.Value != OverrideHotkeyBarBehavior.NeverAffectHotkeyBar && StoreTakeAllConfig.StoreAllIncludesHotkeyBar.Value;
 
                 list = fromInventory.m_inventory.Where((item) => ShouldStoreItem(item, playerConfig, fromInventory.GetHeight(), fromInventory.GetWidth(), includeHotbar)).ToList();
             }

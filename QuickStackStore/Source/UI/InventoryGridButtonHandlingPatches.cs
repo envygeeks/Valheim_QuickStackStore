@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using static QuickStackStore.QSSConfig;
 
@@ -11,136 +11,130 @@ namespace QuickStackStore
     internal class InventoryGridButtonHandlingPatches
     {
         [HarmonyPatch(nameof(InventoryGrid.OnRightClick)), HarmonyPrefix]
-        internal static bool OnRightClick(InventoryGrid __instance, UIInputHandler element)
+        private static bool OnRightClick(InventoryGrid __instance, UIInputHandler element)
         {
             return HandleClick(__instance, element, false);
         }
 
         [HarmonyPatch(nameof(InventoryGrid.OnLeftClick)), HarmonyPrefix]
-        internal static bool OnLeftClick(InventoryGrid __instance, UIInputHandler clickHandler)
+        private static bool OnLeftClick(InventoryGrid __instance, UIInputHandler clickHandler)
         {
             return HandleClick(__instance, clickHandler, true);
         }
 
-        internal static bool HandleClick(InventoryGrid __instance, UIInputHandler clickHandler, bool isLeftClick)
+        private static bool HandleClick(InventoryGrid __instance, UIInputHandler clickHandler, bool isLeftClick)
         {
-            Vector2i buttonPos = __instance.GetButtonPos(clickHandler.gameObject);
-
-            return HandleClick(__instance, buttonPos, isLeftClick);
-        }
-
-        [HarmonyPatch(nameof(InventoryGrid.UpdateGamepad))]
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            try
-            {
-                var list = instructions.ToList();
-
-                var info = typeof(InventoryGridButtonHandlingPatches).GetMethod(nameof(GetButtonDownWithConfig));
-
-                for (int i = 0; i < list.Count; i++)
-                {
-                    if (list[i].opcode == OpCodes.Call && list[i].operand.ToString().ToLower().Contains("getbuttondown"))
-                    {
-                        list[i] = new CodeInstruction(OpCodes.Call, info);
-                    }
-                }
-
-                return list;
-            }
-            catch (Exception e)
-            {
-                Helper.LogO($"There was an exception while transpiling {e}\n{e.StackTrace}");
-                return instructions;
-            }
-        }
-
-        [HarmonyPatch(nameof(InventoryGrid.UpdateGamepad))]
-        private static void Postfix(InventoryGrid __instance)
-        {
-            if (__instance != InventoryGui.instance.m_playerGrid)
-            {
-                return;
-            }
-
-            if (!__instance.m_uiGroup.IsActive)
-            {
-                return;
-            }
-
-            if (ZInput.GetButtonDown("JoyButtonA"))
-            {
-                HandleClick(__instance, __instance.m_selected, true);
-            }
-            else if (ZInput.GetButtonDown("JoyButtonX"))
-            {
-                HandleClick(__instance, __instance.m_selected, false);
-            }
-        }
-
-        public static bool GetButtonDownWithConfig(string key)
-        {
-            bool pressed = ZInput.GetButtonDown(key);
-
-            if (key == "JoyButtonA" || key == "JoyButtonX")
-            {
-                // we don't know which grid we are right here, so make some educated guessed on
-                // whether we should dispose of this button press or not (based on HandleClick).
-                // afterwards the actual player grid can check for the key in postfix and handle it
-                var playerGrid = InventoryGui.instance.m_playerGrid;
-
-                if (!playerGrid.m_uiGroup.IsActive)
-                {
-                    return pressed;
-                }
-
-                if (Player.m_localPlayer.IsTeleporting())
-                {
-                    return pressed;
-                }
-
-                if (InventoryGui.instance.m_dragGo)
-                {
-                    return pressed;
-                }
-
-                if (!FavoritingMode.IsInFavoritingMode())
-                {
-                    return pressed;
-                }
-
-                return false;
-            }
-
-            if (!key.ToLower().Contains("dpad"))
-            {
-                return pressed;
-            }
-
-            switch (ControllerConfig.ControllerDPadUsageInInventoryGrid.Value)
-            {
-                case DPadUsage.InventorySlotMovement:
-                    return pressed;
-
-                case DPadUsage.KeybindsWhileHoldingModifierKey:
-                    return pressed && !KeybindChecker.IsKeyHeld(ControllerConfig.ControllerDPadUsageModifierKeybind.Value);
-
-                case DPadUsage.Keybinds:
-                default:
-                    return false;
-            }
-        }
-
-        internal static bool HandleClick(InventoryGrid __instance, Vector2i buttonPos, bool isLeftClick)
-        {
-            if (InventoryGui.instance.m_playerGrid != __instance)
+            if (ShouldIgnoreFavoritingClick(__instance))
             {
                 return true;
             }
 
-            Player localPlayer = Player.m_localPlayer;
+            Vector2i buttonPos = __instance.GetButtonPos(clickHandler.gameObject);
 
-            if (localPlayer.IsTeleporting())
+            return HandleClickInternal(__instance, buttonPos, isLeftClick);
+        }
+
+        [HarmonyPatch(nameof(InventoryGrid.UpdateGamepad)), HarmonyTranspiler]
+        private static IEnumerable<CodeInstruction> UpdateGamepad_Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            MethodInfo GetButtonDownMethod = AccessTools.DeclaredMethod(typeof(ZInput), nameof(ZInput.GetButtonDown));
+            MethodInfo GetButtonDownWithConfigMethod = AccessTools.DeclaredMethod(typeof(InventoryGridButtonHandlingPatches), nameof(ReactToGetButtonDown));
+
+            List<CodeInstruction> instructionsList = instructions.ToList();
+
+            foreach (CodeInstruction instruction in instructionsList)
+            {
+                if (instruction.opcode != OpCodes.Call || !instruction.OperandIs(GetButtonDownMethod))
+                {
+                    yield return instruction;
+                    continue;
+                }
+
+                // put another copy of the keybind name onto the stack
+                yield return new CodeInstruction(OpCodes.Dup);
+
+                // call the original ZInput.GetButtonDown
+                yield return instruction;
+
+                // put a 'this' object onto the stack
+                yield return new CodeInstruction(OpCodes.Ldarg_0);
+
+                // call my version and consume the boolean return value currently on the stack, replacing it with a potentially edited version
+                yield return new CodeInstruction(OpCodes.Call, GetButtonDownWithConfigMethod);
+            }
+        }
+
+        public static bool ReactToGetButtonDown(string keybindName, bool originalReturnValue, InventoryGrid __instance)
+        {
+            if (__instance != InventoryGui.instance.m_playerGrid)
+            {
+                return originalReturnValue;
+            }
+
+            if (!__instance.m_uiGroup.IsActive)
+            {
+                return originalReturnValue;
+            }
+
+            switch (keybindName)
+            {
+                case "JoyDPadLeft":
+                case "JoyDPadRight":
+                case "JoyDPadDown":
+                case "JoyDPadUp":
+                    if (originalReturnValue && ShouldSuppressDPad())
+                    {
+                        return false;
+                    }
+                    break;
+            }
+
+            if (!originalReturnValue || (keybindName != "JoyButtonA" && keybindName != "JoyButtonX"))
+            {
+                return originalReturnValue;
+            }
+
+            if (ShouldIgnoreFavoritingClick(__instance))
+            {
+                return originalReturnValue;
+            }
+
+            if (keybindName == "JoyButtonA")
+            {
+                HandleClickInternal(__instance, __instance.m_selected, true);
+            }
+            else if (keybindName == "JoyButtonX")
+            {
+                HandleClickInternal(__instance, __instance.m_selected, false);
+            }
+
+            return false;
+        }
+
+        private static bool ShouldSuppressDPad()
+        {
+            switch (ControllerConfig.ControllerDPadUsageInInventoryGrid.Value)
+            {
+                case DPadUsage.InventorySlotMovement:
+                    return false;
+
+                case DPadUsage.KeybindsWhileHoldingModifierKey:
+                    return KeybindChecker.IsKeyHeld(ControllerConfig.ControllerDPadUsageModifierKeybind.Value);
+
+                case DPadUsage.Keybinds:
+                default:
+                    return true;
+            }
+        }
+
+        private static bool ShouldIgnoreFavoritingClick(InventoryGrid __instance)
+        {
+            if (__instance != InventoryGui.instance.m_playerGrid)
+            {
+                return true;
+            }
+
+            if (Player.m_localPlayer.IsTeleporting())
             {
                 return true;
             }
@@ -155,10 +149,17 @@ namespace QuickStackStore
                 return true;
             }
 
+            return false;
+        }
+
+        private static bool HandleClickInternal(InventoryGrid __instance, Vector2i buttonPos, bool isLeftClick)
+        {
             if (buttonPos == new Vector2i(-1, -1))
             {
                 return true;
             }
+
+            Player localPlayer = Player.m_localPlayer;
 
             if (!isLeftClick)
             {

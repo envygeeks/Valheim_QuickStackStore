@@ -140,7 +140,7 @@ namespace QuickStackStore
 
                 Transform playerInventory = __instance.m_player.transform;
 
-                var armor = playerInventory.Find("Armor");
+                Transform armor = playerInventory.Find("Armor");
                 trashRoot = Object.Instantiate(armor, playerInventory);
                 // fix rendering order by going to the right place in the hierachy
                 trashRoot.SetSiblingIndex(armor.GetSiblingIndex() + 1);
@@ -183,7 +183,7 @@ namespace QuickStackStore
 
                 if (clickState == ClickState.ClickedTrashFlagging)
                 {
-                    var didFlagSuccessfully = playerConfig.ToggleItemNameTrashFlagging(InventoryGui.instance.m_dragItem.m_shared);
+                    bool didFlagSuccessfully = playerConfig.ToggleItemNameTrashFlagging(InventoryGui.instance.m_dragItem.m_shared);
 
                     if (!didFlagSuccessfully)
                     {
@@ -210,10 +210,10 @@ namespace QuickStackStore
                         return;
                     }
 
-                    var conf = TrashConfig.ShowConfirmDialogForNormalItem.Value;
+                    var showConfirmDialogForNormalItem = TrashConfig.ShowConfirmDialogForNormalItem.Value;
 
-                    if (conf == ShowConfirmDialogOption.Always
-                        || (conf == ShowConfirmDialogOption.WhenNotTrashFlagged && !playerConfig.IsItemNameConsideredTrashFlagged(___m_dragItem.m_shared)))
+                    if (showConfirmDialogForNormalItem == ShowConfirmDialogOption.Always
+                        || (showConfirmDialogForNormalItem == ShowConfirmDialogOption.WhenNotTrashFlagged && !playerConfig.IsItemNameConsideredTrashFlagged(___m_dragItem.m_shared)))
                     {
                         ShowConfirmDialog(___m_dragItem, ___m_dragAmount, () => TrashItem(__instance, ___m_dragInventory, ___m_dragItem, ___m_dragAmount));
                     }
@@ -308,7 +308,7 @@ namespace QuickStackStore
                 gameObject.AddComponent<TrashFrameHandler>().frame = newFrame;
             }
 
-            protected void Start()
+            protected void OnEnable()
             {
                 StartCoroutine(DelayedOverrideSorting());
             }

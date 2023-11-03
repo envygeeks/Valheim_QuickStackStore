@@ -60,7 +60,7 @@ namespace QuickStackStore
                     img = CreateBorderImage(___m_elements[index].m_queued);
                 }
 
-                var isItemFavorited = playerConfig.IsItemNameFavorited(itemData.m_shared);
+                bool isItemFavorited = playerConfig.IsItemNameFavorited(itemData.m_shared);
                 if (isItemFavorited)
                 {
                     // enabled -> slot is favorited
@@ -78,7 +78,7 @@ namespace QuickStackStore
                 }
                 else
                 {
-                    var isItemTrashFlagged = playerConfig.IsItemNameConsideredTrashFlagged(itemData.m_shared);
+                    bool isItemTrashFlagged = playerConfig.IsItemNameConsideredTrashFlagged(itemData.m_shared);
 
                     if (isItemTrashFlagged)
                     {

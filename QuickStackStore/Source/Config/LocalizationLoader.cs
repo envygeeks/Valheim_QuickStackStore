@@ -23,17 +23,17 @@ namespace QuickStackStore
 
         internal static void SetupTranslations()
         {
-            var currentLanguage = Localization.instance.GetSelectedLanguage();
+            string currentLanguage = Localization.instance.GetSelectedLanguage();
 
             LocalizationConfig.FixTakeAllDefaultText(Localization.instance, currentLanguage);
 
-            var languageFilesFound = Directory.GetFiles(Path.GetDirectoryName(Paths.PluginPath), "QuickStackStore.*.json", SearchOption.AllDirectories);
+            string[] languageFilesFound = Directory.GetFiles(Path.GetDirectoryName(Paths.PluginPath), "QuickStackStore.*.json", SearchOption.AllDirectories);
 
             bool externalFileLoaded = false;
 
             foreach (var languageFilePath in languageFilesFound)
             {
-                var languageKey = Path.GetFileNameWithoutExtension(languageFilePath).Split('.')[1];
+                string languageKey = Path.GetFileNameWithoutExtension(languageFilePath).Split('.')[1];
 
                 if (languageKey == currentLanguage)
                 {

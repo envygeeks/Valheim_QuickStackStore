@@ -231,8 +231,7 @@ namespace QuickStackStore
             ControllerDPadUsageInInventoryGrid = Config.Bind(sectionName, nameof(ControllerDPadUsageInInventoryGrid), DPadUsage.Keybinds, "In the base game the DPad and the left stick are both used for slot movement inside the inventory grid. This allows you to exclude the DPad from this to get more keys for keybinds.");
             ControllerDPadUsageModifierKeybind = Config.Bind(sectionName, nameof(ControllerDPadUsageModifierKeybind), new KeyboardShortcut(KeyCode.None), $"When {nameof(ControllerDPadUsageInInventoryGrid)} is set to {DPadUsage.KeybindsWhileHoldingModifierKey}, then holding this prevents slot movement in the inventory grid with the DPad.");
 
-            // TODO change default once controller hints are fixed again
-            RemoveControllerButtonHintFromTakeAllButton = Config.Bind(sectionName, nameof(RemoveControllerButtonHintFromTakeAllButton), true, $"Remove the button hint from the 'Take All' button while using a controller for consistency. Especially useful when using the new keybind {nameof(TakeAllKeybind)}.");
+            RemoveControllerButtonHintFromTakeAllButton = Config.Bind(sectionName, nameof(RemoveControllerButtonHintFromTakeAllButton), false, $"Remove the button hint from the 'Take All' button while using a controller for consistency. Especially useful when using the new keybind {nameof(TakeAllKeybind)}.");
             RemoveControllerButtonHintFromTakeAllButton.SettingChanged += (a, b) => ButtonRenderer.OnButtonRelevantSettingChanged(plugin);
 
             UseHardcodedControllerSupport = Config.Bind(sectionName, nameof(UseHardcodedControllerSupport), true, "Whether to enable the hardcoded controller bindings including UI hints while a controller is used. This disables custom hotkeys.");

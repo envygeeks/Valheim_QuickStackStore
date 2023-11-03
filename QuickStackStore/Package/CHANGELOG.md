@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.4
+- Fixed trash can not reacting to clicks when using both AzuEPI 1.3 and Jewelcrafting
+- Replaced controller key check with a more modern version for better compatibility
+- Reenabled controller key hints that were disabled in 1.3.9 as their base game performance has since been improved
 ## 1.4.3
 - Added full compatibility for AzuEPI 1.3 using its API (thank you, Azu!)
 - Fixed backwards compatibility for AzuEPI 1.2 due to config type change

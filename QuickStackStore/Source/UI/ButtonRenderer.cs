@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using static QuickStackStore.CompatibilitySupport;
-using static QuickStackStore.ControllerButtonHintHelper;
 using static QuickStackStore.QSSConfig;
 
 namespace QuickStackStore
@@ -52,14 +51,14 @@ namespace QuickStackStore
                     // reset in case player forgot to turn it off
                     FavoritingMode.HasCurrentlyToggledFavoriting = false;
 
-                    var conf = SortConfig.AutoSort.Value;
+                    AutoSortBehavior autoSortBehavior = SortConfig.AutoSort.Value;
 
-                    if (conf == AutoSortBehavior.SortPlayerInventoryOnOpen || conf == AutoSortBehavior.Both)
+                    if (autoSortBehavior == AutoSortBehavior.SortPlayerInventoryOnOpen || autoSortBehavior == AutoSortBehavior.Both)
                     {
                         SortModule.SortPlayerInv(Player.m_localPlayer.m_inventory, UserConfig.GetPlayerConfig(Player.m_localPlayer.GetPlayerID()));
                     }
 
-                    if (__instance.m_currentContainer && (conf == AutoSortBehavior.SortContainerOnOpen || conf == AutoSortBehavior.Both))
+                    if (__instance.m_currentContainer && (autoSortBehavior == AutoSortBehavior.SortContainerOnOpen || autoSortBehavior == AutoSortBehavior.Both))
                     {
                         SortModule.SortContainer(__instance.m_currentContainer);
                     }
@@ -71,7 +70,7 @@ namespace QuickStackStore
                     return;
                 }
 
-                FixTakeAllButtonControllerHint(__instance);
+                ControllerButtonHintHelper.FixTakeAllButtonControllerHint(__instance);
 
                 if (origButtonLength == -1)
                 {
@@ -87,10 +86,10 @@ namespace QuickStackStore
 
                 int extraContainerButtons = 0;
 
-                var displayStoreAllButton = StoreTakeAllConfig.DisplayStoreAllButton.Value;
-                var displayQuickStackButtons = QuickStackConfig.DisplayQuickStackButtons.Value;
-                var displayRestockButtons = RestockConfig.DisplayRestockButtons.Value;
-                var displaySortButtons = SortConfig.DisplaySortButtons.Value;
+                bool displayStoreAllButton = StoreTakeAllConfig.DisplayStoreAllButton.Value;
+                ShowTwoButtons displayQuickStackButtons = QuickStackConfig.DisplayQuickStackButtons.Value;
+                ShowTwoButtons displayRestockButtons = RestockConfig.DisplayRestockButtons.Value;
+                ShowTwoButtons displaySortButtons = SortConfig.DisplaySortButtons.Value;
 
                 if (GeneralConfig.OverrideButtonDisplay.Value != OverrideButtonDisplay.DisableAllNewButtons)
                 {
@@ -147,9 +146,9 @@ namespace QuickStackStore
 
                 int miniButtons = 0;
 
-                var weight = __instance.m_player.transform.Find("Weight");
+                Transform weight = __instance.m_player.transform.Find("Weight");
 
-                var randyStatus = HasRandyPlugin();
+                RandyStatus randyStatus = HasRandyPlugin();
 
                 if (displaySortButtons.ShouldSpawnMiniInventoryButton())
                 {
@@ -179,7 +178,7 @@ namespace QuickStackStore
                     }
                 }
 
-                var allowAreaButtons = AllowAreaStackingRestocking();
+                bool allowAreaButtons = AllowAreaStackingRestocking();
 
                 if (allowAreaButtons && displayRestockButtons.ShouldSpawnMiniInventoryButton() && RestockConfig.RestockFromNearbyRange.Value > 0)
                 {
@@ -235,14 +234,14 @@ namespace QuickStackStore
                     }
                 }
 
-                var favConf = FavoriteConfig.DisplayFavoriteToggleButton.Value;
+                FavoritingToggling displayFavoriteToggleButton = FavoriteConfig.DisplayFavoriteToggleButton.Value;
 
-                if (favConf != FavoritingToggling.Disabled)
+                if (displayFavoriteToggleButton != FavoritingToggling.Disabled)
                 {
                     int index;
                     Transform parent;
 
-                    if (favConf == FavoritingToggling.EnabledBottomButton)
+                    if (displayFavoriteToggleButton == FavoritingToggling.EnabledBottomButton)
                     {
                         index = ++miniButtons;
                         parent = weight;
@@ -371,7 +370,7 @@ namespace QuickStackStore
         private static Vector3 OppositePositionOfTakeAllButton()
         {
             // move the button to the right by half of its removed length
-            var scaleBased = (origButtonLength / 2) * (1 - shrinkFactor);
+            float scaleBased = (origButtonLength / 2) * (1 - shrinkFactor);
             return origButtonPosition + new Vector3(440f + scaleBased, 0f);
         }
 
@@ -412,7 +411,7 @@ namespace QuickStackStore
 
             button.onClick.RemoveAllListeners();
 
-            instance.StartCoroutine(WaitAFrameToSetupControllerHint(button, joyHint));
+            instance.StartCoroutine(ControllerButtonHintHelper.WaitAFrameToSetupControllerHint(button, joyHint));
 
             return button;
         }
@@ -431,7 +430,7 @@ namespace QuickStackStore
         {
             var button = CreateAbstractButton(instance, name, joyHint, instance.m_player.transform);
 
-            var rect = (RectTransform)button.transform;
+            RectTransform rect = (RectTransform)button.transform;
             rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, miniButtonSize);
             rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, miniButtonSize);
 
@@ -582,7 +581,7 @@ namespace QuickStackStore
 
                 if (text != null)
                 {
-                    var label = LocalizationConfig.GetRelevantTranslation(LocalizationConfig.SortLabel, nameof(LocalizationConfig.SortLabel));
+                    string label = LocalizationConfig.GetRelevantTranslation(LocalizationConfig.SortLabel, nameof(LocalizationConfig.SortLabel));
 
                     if (SortConfig.DisplaySortCriteriaInLabel.Value)
                     {

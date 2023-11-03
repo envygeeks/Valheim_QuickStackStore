@@ -13,7 +13,7 @@ namespace QuickStackStore
     {
         public const string GUID = "goldenrevolver.quick_stack_store";
         public const string NAME = "Quick Stack - Store - Sort - Trash - Restock";
-        public const string VERSION = "1.4.3";
+        public const string VERSION = "1.4.4";
 
         // intentionally not Awake, so the chainloader is done (for compatibility checks, mostly in the config)
         protected void Start()
@@ -34,10 +34,7 @@ namespace QuickStackStore
                 }
             }
 
-            var path = "QuickStackStore.Resources";
-
-            ControllerButtonHintHelper.circleButtonSprite = Helper.LoadSprite($"{path}.circleButton.png", new Rect(0, 0, 36, 36));
-            ControllerButtonHintHelper.rectButtonSprite = Helper.LoadSprite($"{path}.rectangleButton.png", new Rect(0, 0, 28, 28));
+            string path = "QuickStackStore.Resources";
 
             BorderRenderer.border = Helper.LoadSprite($"{path}.border.png", new Rect(0, 0, 1024, 1024));
             TrashModule.trashSprite = Helper.LoadSprite($"{path}.trash.png", new Rect(0, 0, 64, 64));

@@ -24,7 +24,7 @@ namespace QuickStackStore
 
                 if (FavoriteConfig.FavoriteToggleButtonStyle.Value == FavoriteToggleButtonStyle.TextStarInItemFavoriteColor)
                 {
-                    var color = ColorUtility.ToHtmlStringRGB(FavoriteConfig.BorderColorFavoritedItem.Value);
+                    string color = ColorUtility.ToHtmlStringRGB(FavoriteConfig.BorderColorFavoritedItem.Value);
 
                     ButtonRenderer.favoritingTogglingButtonText.text = $"<color=#{color}>{(value ? blackStar : whiteStar)}</color>";
                 }

@@ -79,7 +79,7 @@ namespace QuickStackStore
                     return item.m_shared.m_weight;
 
                 case SortCriteriaEnum.Type:
-                    var typeNum = (int)item.m_shared.m_itemType;
+                    int typeNum = (int)item.m_shared.m_itemType;
 
                     if (typeNum < 0 || typeNum > 23)
                     {
@@ -218,7 +218,7 @@ namespace QuickStackStore
                 for (int x = 0; x < inventory.GetWidth(); x++)
                 {
                     // see y initialization for reason for abs
-                    var pos = new Vector2i(x, Math.Abs(y));
+                    Vector2i pos = new Vector2i(x, Math.Abs(y));
 
                     if (playerConfig != null)
                     {
@@ -259,16 +259,16 @@ namespace QuickStackStore
                     continue;
                 }
 
-                var totalItemCount = 0;
+                int totalItemCount = 0;
 
                 foreach (var item in nonFullStacks)
                 {
                     totalItemCount += item.m_stack;
                 }
 
-                var maxStack = nonFullStacks.First().m_shared.m_maxStackSize;
+                int maxStack = nonFullStacks.First().m_shared.m_maxStackSize;
 
-                var remainingItemCount = totalItemCount;
+                int remainingItemCount = totalItemCount;
 
                 foreach (var item in nonFullStacks)
                 {

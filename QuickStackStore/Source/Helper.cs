@@ -14,7 +14,7 @@ namespace QuickStackStore
                 return;
             }
 
-            var toPrint = $"{QuickStackStorePlugin.NAME} {QuickStackStorePlugin.VERSION}: {(s != null ? s.ToString() : "null")}";
+            string toPrint = $"{QuickStackStorePlugin.NAME} {QuickStackStorePlugin.VERSION}: {(s != null ? s.ToString() : "null")}";
 
             if (DebugConfig.ShowDebugLogs?.Value == DebugLevel.Log)
             {
@@ -28,7 +28,7 @@ namespace QuickStackStore
 
         internal static void LogO(object s, DebugLevel OverrideLevel = DebugLevel.Warning)
         {
-            var toPrint = $"{QuickStackStorePlugin.NAME} {QuickStackStorePlugin.VERSION}: {(s != null ? s.ToString() : "null")}";
+            string toPrint = $"{QuickStackStorePlugin.NAME} {QuickStackStorePlugin.VERSION}: {(s != null ? s.ToString() : "null")}";
 
             if (OverrideLevel == DebugLevel.Log)
             {
@@ -43,7 +43,7 @@ namespace QuickStackStore
         internal static int CompareSlotOrder(Vector2i a, Vector2i b)
         {
             // Bottom left to top right
-            var yPosCompare = -a.y.CompareTo(b.y);
+            int yPosCompare = -a.y.CompareTo(b.y);
 
             if (GeneralConfig.UseTopDownLogicForEverything.Value)
             {

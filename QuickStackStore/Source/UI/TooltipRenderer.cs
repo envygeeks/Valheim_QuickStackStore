@@ -27,17 +27,17 @@ namespace QuickStackStore
             StringBuilder stringBuilder = new StringBuilder(256);
             stringBuilder.Append(__result);
 
-            var conf = UserConfig.GetPlayerConfig(Player.m_localPlayer.GetPlayerID());
+            var userConfig = UserConfig.GetPlayerConfig(Player.m_localPlayer.GetPlayerID());
 
-            if (conf.IsItemNameFavorited(item.m_shared))
+            if (userConfig.IsItemNameFavorited(item.m_shared))
             {
-                var color = ColorUtility.ToHtmlStringRGB(FavoriteConfig.BorderColorFavoritedItem.Value);
+                string color = ColorUtility.ToHtmlStringRGB(FavoriteConfig.BorderColorFavoritedItem.Value);
 
                 stringBuilder.Append($"\n<color=#{color}>{LocalizationConfig.GetRelevantTranslation(LocalizationConfig.FavoritedItemTooltip, nameof(LocalizationConfig.FavoritedItemTooltip))}</color>");
             }
-            else if (conf.IsItemNameConsideredTrashFlagged(item.m_shared))
+            else if (userConfig.IsItemNameConsideredTrashFlagged(item.m_shared))
             {
-                var color = ColorUtility.ToHtmlStringRGB(FavoriteConfig.BorderColorTrashFlaggedItem.Value);
+                string color = ColorUtility.ToHtmlStringRGB(FavoriteConfig.BorderColorTrashFlaggedItem.Value);
 
                 stringBuilder.Append($"\n<color=#{color}>{LocalizationConfig.GetRelevantTranslation(LocalizationConfig.TrashFlaggedItemTooltip, nameof(LocalizationConfig.TrashFlaggedItemTooltip))}</color>");
             }
