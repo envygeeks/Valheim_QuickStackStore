@@ -86,29 +86,26 @@ namespace QuickStackStore
                     {
                         return false;
                     }
-                    break;
-            }
+                    else
+                    {
+                        return originalReturnValue;
+                    }
 
-            if (!originalReturnValue || (keybindName != "JoyButtonA" && keybindName != "JoyButtonX"))
-            {
-                return originalReturnValue;
-            }
+                case "JoyButtonA":
+                case "JoyButtonX":
+                    if (!originalReturnValue || ShouldIgnoreFavoritingClick(__instance))
+                    {
+                        return originalReturnValue;
+                    }
+                    else
+                    {
+                        HandleClickInternal(__instance, __instance.m_selected, keybindName == "JoyButtonA");
+                        return false;
+                    }
 
-            if (ShouldIgnoreFavoritingClick(__instance))
-            {
-                return originalReturnValue;
+                default:
+                    return originalReturnValue;
             }
-
-            if (keybindName == "JoyButtonA")
-            {
-                HandleClickInternal(__instance, __instance.m_selected, true);
-            }
-            else if (keybindName == "JoyButtonX")
-            {
-                HandleClickInternal(__instance, __instance.m_selected, false);
-            }
-
-            return false;
         }
 
         private static bool ShouldSuppressDPad()
