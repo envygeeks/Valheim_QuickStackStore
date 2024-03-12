@@ -1,5 +1,7 @@
 # Changelog
 
+## 1.4.6
+- Fixed a visual glitch with the favoriting borders when using the mod Recycle_N_Reclaim (thanks for the heads up, Azu)
 ## 1.4.5
 - Fixed critical bug when using Adventure Backpacks with 'AllowAreaStackingToNonPhysicalContainers' which deleted other players if you did an area stack/restock close to them (possible since version 1.4.0)
 - 'AllowAreaStackingToNonPhysicalContainers' is no longer required to detect Item Drawers

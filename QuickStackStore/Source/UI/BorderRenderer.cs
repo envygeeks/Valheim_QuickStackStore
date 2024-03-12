@@ -11,6 +11,8 @@ namespace QuickStackStore
     {
         public static Sprite border;
 
+        public const string borderImageKey = "QuickStackStoreBorderImage";
+
         [HarmonyPatch(nameof(InventoryGrid.UpdateGui))]
         [HarmonyPostfix]
         internal static void UpdateGui(Player player, Inventory ___m_inventory, List<InventoryGrid.Element> ___m_elements)
@@ -29,19 +31,18 @@ namespace QuickStackStore
                 {
                     int index = y * width + x;
 
-                    Image img;
+                    Image img = ___m_elements[index].m_queued.transform.Find(borderImageKey)?.GetComponent<Image>();
 
-                    if (___m_elements[index].m_queued.transform.childCount > 0)
-                    {
-                        img = ___m_elements[index].m_queued.transform.GetChild(0).GetComponent<Image>();
-                    }
-                    else
+                    if (img == null)
                     {
                         img = CreateBorderImage(___m_elements[index].m_queued);
                     }
 
-                    img.color = FavoriteConfig.BorderColorFavoritedSlot.Value;
-                    img.enabled = playerConfig.IsSlotFavorited(new Vector2i(x, y));
+                    if (img != null)
+                    {
+                        img.color = FavoriteConfig.BorderColorFavoritedSlot.Value;
+                        img.enabled = playerConfig.IsSlotFavorited(new Vector2i(x, y));
+                    }
                 }
             }
 
@@ -49,15 +50,16 @@ namespace QuickStackStore
             {
                 int index = itemData.GridVectorToGridIndex(width);
 
-                Image img;
+                Image img = ___m_elements[index].m_queued.transform.Find(borderImageKey)?.GetComponent<Image>();
 
-                if (___m_elements[index].m_queued.transform.childCount > 0)
-                {
-                    img = ___m_elements[index].m_queued.transform.GetChild(0).GetComponent<Image>();
-                }
-                else
+                if (img == null)
                 {
                     img = CreateBorderImage(___m_elements[index].m_queued);
+                }
+
+                if (img == null)
+                {
+                    continue;
                 }
 
                 bool isItemFavorited = playerConfig.IsItemNameFavorited(itemData.m_shared);
@@ -103,6 +105,8 @@ namespace QuickStackStore
         {
             // set m_queued parent as parent first, so the position is correct
             var obj = Object.Instantiate(baseImg, baseImg.transform.parent);
+            // Set the name to something unique so we can find it later, and be compatible with other mods
+            obj.name = BorderRenderer.borderImageKey;
             // change the parent to the m_queued image so we can access the new image without a loop
             obj.transform.SetParent(baseImg.transform);
             // set the new border image

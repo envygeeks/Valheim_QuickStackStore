@@ -119,6 +119,8 @@ The UI from this mod is currently incompatible with [Project AUGA](https://www.n
 
 This mod is incompatible with [Trash Items](https://valheim.thunderstore.io/package/virtuaCode/TrashItems/) because it is included in this mod.
 
+This mod cannot detect item drawers from [KGvalheim's ItemDrawers](https://valheim.thunderstore.io/package/KGvalheim/ItemDrawers/) (unlike the item drawers from [makail's ItemDrawers](https://valheim.thunderstore.io/package/makail/ItemDrawers/) in the past).
+
 
 ## Localization
 
@@ -138,5 +140,5 @@ The Korean translation was provided by [hanawa07](https://www.nexusmods.com/user
 The Italian translation was provided by [Marcuz08](https://github.com/marcowesii).
 
 
-Source code available on github: https://github.com/Goldenrevolver/QuickStackStore
+Source code available on github: https://github.com/Goldenrevolver/QuickStackStore \
 If you want to support me, check out my ko-fi: https://ko-fi.com/goldenrevolver
