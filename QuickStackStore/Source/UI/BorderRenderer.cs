@@ -105,7 +105,14 @@ namespace QuickStackStore
         {
             // set m_queued parent as parent first, so the position is correct
             var obj = Object.Instantiate(baseImg, baseImg.transform.parent);
-            // Set the name to something unique so we can find it later, and be compatible with other mods
+
+            // destroy all children of the newly created clone of m_queued image (as other mods add children to it too)
+            foreach (Transform child in obj.transform)
+            {
+                Object.Destroy(child.gameObject);
+            }
+
+            // set the name to something unique so we can find it later, and be compatible with other mods
             obj.name = BorderRenderer.borderImageKey;
             // change the parent to the m_queued image so we can access the new image without a loop
             obj.transform.SetParent(baseImg.transform);
