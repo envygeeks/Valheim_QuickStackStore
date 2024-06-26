@@ -122,7 +122,7 @@ namespace QuickStackStore
                 {
                     var type = assembly.GetTypes().First(a => a.IsClass && a.Name == "EquipmentAndQuickSlots");
                     var pubStaticFields = type.GetFields(BindingFlags.Public | BindingFlags.Static);
-                    RandyQuickSlotsEnabled = pubStaticFields.First(t => t.Name == "QuickSlotsEnabled");
+                    RandyQuickSlotsEnabled = pubStaticFields.First(t => t.Name?.ToLower() == "QuickSlotsEnabled".ToLower());
                 }
             }
 
@@ -204,7 +204,7 @@ namespace QuickStackStore
                 {
                     var type = assembly.GetTypes().First(a => a.IsClass && a.Name == className);
                     var pubStaticFields = type.GetFields(BindingFlags.Public | BindingFlags.Static);
-                    fieldInfo = pubStaticFields.First(t => t.Name == fieldName);
+                    fieldInfo = pubStaticFields.First(t => t.Name?.ToLower() == fieldName.ToLower());
                 }
             }
 
@@ -272,7 +272,7 @@ namespace QuickStackStore
                 {
                     var type = assembly.GetTypes().First(a => a.IsClass && a.Name == "ComfyQuickSlots");
                     var pubStaticMethods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
-                    IsComfyArmorSlot = pubStaticMethods.First(t => t.Name == "IsArmorSlot" && t.GetParameters().Length == 1);
+                    IsComfyArmorSlot = pubStaticMethods.First(t => t.Name?.ToLower() == "IsArmorSlot".ToLower() && t.GetParameters().Length == 1);
                 }
             }
 
@@ -303,8 +303,8 @@ namespace QuickStackStore
                 {
                     var type = assembly.GetTypes().First(a => a.IsClass && a.Name == "BetterArchery");
                     var pubStaticFields = type.GetFields(BindingFlags.Public | BindingFlags.Static);
-                    IsQuiverEnabled = pubStaticFields.First(t => t.Name == "configQuiverEnabled");
-                    QuiverRowIndex = pubStaticFields.First(t => t.Name == "QuiverRowIndex");
+                    IsQuiverEnabled = pubStaticFields.First(t => t.Name?.ToLower() == "ConfigQuiverEnabled".ToLower());
+                    QuiverRowIndex = pubStaticFields.First(t => t.Name?.ToLower() == "QuiverRowIndex".ToLower());
                 }
             }
 

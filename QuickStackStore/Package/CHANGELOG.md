@@ -1,7 +1,9 @@
 # Changelog
 
+## 1.4.8
+- Fixed compatibility support for Better Archery
 ## 1.4.7
-- Made sure that when the favoriting borders are spawned no child elements of it are copied. This is the same fix AzuAutoStore applied and once Recycle_N_Reclaim also applies it, it fixes seeing borders on items that are no longer favorited.
+- Made sure that when the favoriting borders are spawned no child elements of it are copied. This is the same fix AzuAutoStore applied and once Recycle_N_Reclaim also applies it, it fixes favoriting borders not disappearing from items when unfavoriting.
 ## 1.4.6
 - Fixed a visual glitch with the favoriting borders when using the mod Recycle_N_Reclaim (thanks for the heads up, Azu)
 ## 1.4.5
