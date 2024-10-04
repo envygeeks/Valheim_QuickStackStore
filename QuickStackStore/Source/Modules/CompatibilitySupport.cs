@@ -9,6 +9,7 @@ namespace QuickStackStore
     public static class CompatibilitySupport
     {
         private static MethodInfo IsComfyArmorSlot;
+        private static MethodInfo IsRestrictedContainer;
         private static FieldInfo IsQuiverEnabled;
         private static FieldInfo QuiverRowIndex;
         private static FieldInfo AedenAddEquipmentRow;
@@ -40,6 +41,7 @@ namespace QuickStackStore
         public const string multiUserChest = "com.maxsch.valheim.MultiUserChest";
         public const string jewelCrafting = "org.bepinex.plugins.jewelcrafting";
         public const string recyclePlus = "TastyChickenLegs.RecyclePlus";
+        public const string dynamicStoragePiles = "com.maxsch.valheim.DynamicStoragePiles";
 
         public static System.Version mucUpdateVersion = new System.Version(0, 4, 0);
         public static System.Version azuEPIOnOffUpdate = new System.Version(1, 2, 0);
@@ -291,6 +293,41 @@ namespace QuickStackStore
             }
 
             return false;
+        }
+
+        public static bool TryGetRestrictedContainer(string containerName, out string allowedItem)
+        {
+            allowedItem = null;
+
+            if (!HasPlugin(dynamicStoragePiles))
+            {
+                return false;
+            }
+
+            if (IsRestrictedContainer == null)
+            {
+                var assembly = Assembly.Load("DynamicStoragePiles");
+
+                if (assembly != null)
+                {
+                    var type = assembly.GetTypes().First(a => a.IsClass && a.Name == "RestrictContainers");
+                    var pubStaticMethods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
+                    IsRestrictedContainer = pubStaticMethods.First(t => t.Name?.ToLower() == "IsRestrictedContainer".ToLower());
+                }
+            }
+
+            object[] parameters = new object[] { containerName, null };
+            object isRestrictedObject = IsRestrictedContainer?.Invoke(null, parameters);
+
+            if (isRestrictedObject is bool isRestricted && isRestricted)
+            {
+                allowedItem = (string)parameters[1];
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private static bool IsBetterArcheryQuiverSlot(Vector2i itemPos, bool includeRestockableSlots)

@@ -131,26 +131,22 @@ namespace QuickStackStore
 
             if (nonTrophies?.Count > 0)
             {
-                for (int i = container.m_inventory.Count - 1; i >= 0; i--)
+                if (container.m_inventory.Count == 0)
                 {
-                    var containerItem = container.m_inventory[i];
+                    bool isRestrictedDynamicStorageContainer = CompatibilitySupport.TryGetRestrictedContainer(container.m_name, out string containerDropItemName);
 
-                    for (int j = nonTrophies.Count - 1; j >= 0; j--)
+                    if (isRestrictedDynamicStorageContainer)
                     {
-                        var playerItem = nonTrophies[j];
+                        movedStackCount = GetQuickStackCountIntoThisContainer(nonTrophies, playerInventory, container, movedStackCount, containerDropItemName, true);
+                    }
+                }
+                else
+                {
+                    for (int i = container.m_inventory.Count - 1; i >= 0; i--)
+                    {
+                        string containerSharedItemName = container.m_inventory[i].m_shared.m_name;
 
-                        // don't check for quality or custom data, we want to quick stack solely based on name, and AddItem will figure out the rest
-                        if (containerItem.m_shared.m_name != playerItem.m_shared.m_name)
-                        {
-                            continue;
-                        }
-
-                        if (container.AddItem(playerItem))
-                        {
-                            playerInventory.RemoveItem(playerItem);
-                            nonTrophies.RemoveAt(j);
-                            movedStackCount++;
-                        }
+                        movedStackCount = GetQuickStackCountIntoThisContainer(nonTrophies, playerInventory, container, movedStackCount, containerSharedItemName, false);
                     }
                 }
             }
@@ -160,6 +156,39 @@ namespace QuickStackStore
             if (callPlayerInvChanged)
             {
                 playerInventory.Changed();
+            }
+
+            return movedStackCount;
+        }
+
+        private static int GetQuickStackCountIntoThisContainer(List<ItemData> nonTrophies, Inventory playerInventory, Inventory container, int movedStackCount, string containerItemName, bool checkDropPrefabName)
+        {
+            for (int j = nonTrophies.Count - 1; j >= 0; j--)
+            {
+                var playerItem = nonTrophies[j];
+
+                bool hasCorrectName;
+                if (checkDropPrefabName && playerItem.m_dropPrefab)
+                {
+                    hasCorrectName = containerItemName == playerItem.m_dropPrefab.name;
+                }
+                else
+                {
+                    hasCorrectName = containerItemName == playerItem.m_shared.m_name;
+                }
+
+                // don't check for quality or custom data, we want to quick stack solely based on name, and AddItem will figure out the rest
+                if (!hasCorrectName)
+                {
+                    continue;
+                }
+
+                if (container.AddItem(playerItem))
+                {
+                    playerInventory.RemoveItem(playerItem);
+                    nonTrophies.RemoveAt(j);
+                    movedStackCount++;
+                }
             }
 
             return movedStackCount;
