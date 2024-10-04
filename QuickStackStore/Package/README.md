@@ -137,8 +137,8 @@ The Brazilian Portuguese translation was provided by [kaiqueknup](https://www.ne
 The Polish translation was provided by [ViRooz](https://www.nexusmods.com/users/174267204).\
 The Swedish translation was provided by [DeathDaisy](https://github.com/DeathDaisy).\
 The Korean translation was provided by [hanawa07](https://www.nexusmods.com/users/134678658).\
-The Italian translation was provided by [Marcuz08](https://github.com/marcowesii).
-
+The Italian translation was provided by [Marcuz08](https://github.com/marcowesii).\
+The Ukrainian translation was provided by [cawa-93](https://github.com/cawa-93).
 
 Source code available on github: https://github.com/Goldenrevolver/QuickStackStore \
 If you want to support me, check out my ko-fi: https://ko-fi.com/goldenrevolver

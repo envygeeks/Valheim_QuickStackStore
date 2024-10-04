@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.9
+- Added support for Dynamic Storage Piles mod to allow quick stacking the restricted item into a pile even when it's empty
+- Added Ukrainian translation
 ## 1.4.8
 - Fixed compatibility support for Better Archery
 ## 1.4.7
