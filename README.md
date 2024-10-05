@@ -26,10 +26,8 @@ For further information visit its [Nexus page](https://www.nexusmods.com/valheim
  - The publicizer is just like any other mod. So install it with a mod manager or manually take the `Bepinex-Publicizer` folder from the `.zip` and place it under `<ValheimGameDirectory>\BepInEx\plugins`
  - Run the game once, the BepInEx console should pop-up. In the background, BepInEx Publicizer will create assemblies under `<ValheimGameDirectory>\valheim_Data\Managed\publicized_assemblies`
  - You can now remove or deactive the publicizer, or keep it there, so it automatically updates the assemblies when the game updates
-#### .NET framework
- - If your IDE wants to upgrade this project to version 4.7 or 4.8, decline. Valheim only supports version 4.6.2, so download that one
 #### Packages
- - If your IDE does not prompt you to download the required NuGet packages 'ILRepack.Lib.MSBuild.Task' and 'YamlDotNet', download them through the NuGet package manager of your IDE (be sure to download the ones for .NET framework 4.6.2)
+ - If your IDE does not prompt you to download the required NuGet packages 'ILRepack.Lib.MSBuild.Task' and 'YamlDotNet', download them through the NuGet package manager of your IDE (be sure to download the ones for .NET framework 4.8)
 
 You should now successfully build this project 🎉
 
