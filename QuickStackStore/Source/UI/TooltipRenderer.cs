@@ -14,10 +14,11 @@ namespace QuickStackStore
             typeof(ItemDrop.ItemData),
             typeof(int),
             typeof(bool),
-            typeof(float)
+            typeof(float),
+            typeof(int)
         })]
         [HarmonyPostfix]
-        public static void GetTooltip(ItemDrop.ItemData item, bool crafting, ref string __result)
+        public static void GetTooltip(ItemDrop.ItemData item, int qualityLevel, bool crafting, float worldLevel, int stackOverride, ref string __result)
         {
             if (crafting || !FavoriteConfig.DisplayTooltipHint.Value)
             {
